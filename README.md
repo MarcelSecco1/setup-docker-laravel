@@ -1,6 +1,6 @@
 
 # Setup Docker Para Projetos Laravel (+9) (com Swoole + Octane)
-[Assine a Academy, e Seja VIP!](https://academy.especializati.com.br)
+
 
 ### Passo a passo
 Clone Repositório

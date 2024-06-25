@@ -1,74 +1,44 @@
-version: "3.7"
+version: "3"
 
 services:
     # image project
     app:
         build:
-            context: .
+            context: ./docker/8.1
             dockerfile: Dockerfile
         restart: unless-stopped
+        ports:
+            - '8989:80'
         working_dir: /var/www/
         volumes:
             - ./:/var/www
         depends_on:
             - redis
         networks:
-            - laravel
-
-    # nginx
-    nginx:
-        image: nginx:alpine
-        restart: unless-stopped
-        ports:
-            - "8989:80"
-        volumes:
-            - ./:/var/www
-            - ./docker/nginx/:/etc/nginx/conf.d/
-        networks:
-            - laravel
+            - laravel-9
 
     # db mysql
-    db:
+    mysql:
         image: mysql:5.7.22
         restart: unless-stopped
         environment:
-            MYSQL_DATABASE: ${DB_DATABASE:-laravel}
-            MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-root}
-            MYSQL_PASSWORD: ${DB_PASSWORD:-userpass}
-            MYSQL_USER: ${DB_USERNAME:-username}
+            MYSQL_DATABASE: ${DB_DATABASE}
+            MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+            MYSQL_PASSWORD: ${DB_PASSWORD}
+            MYSQL_USER: ${DB_USERNAME}
         volumes:
             - ./.docker/mysql/dbdata:/var/lib/mysql
         ports:
             - "3388:3306"
         networks:
-            - laravel
+            - laravel-9
 
-    # PHPMyAdmin
-    phpmyadmin:
-        image: phpmyadmin/phpmyadmin
-        restart: unless-stopped
-        ports:
-            - "8080:80"
-        environment:
-            PMA_HOST: db
-            PMA_PORT: 3306
-            MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-userpass}
-
-    # mailhog
-    mailhog:
-        image: mailhog/mailhog:latest
-        restart: always
-        ports:
-            - 1025:1025
-            - 8025:8025
-        networks:
-            - laravel
     # redis
     redis:
         image: redis:latest
         networks:
-            - laravel
+            - laravel-9
 
 networks:
-    laravel:
+    laravel-9:
         driver: bridge
